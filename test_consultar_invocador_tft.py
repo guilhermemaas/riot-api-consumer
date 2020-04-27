@@ -2,25 +2,32 @@ import pytest
 import requests
 
 """
-1 - Quero consultar o um Invocador afim de buscar seus dados no modo de jogo TFT.
+1) Quero consultar o um Invocador afim de buscar seus dados no modo de jogo TFT.
+2) Quero consultar as informacoes de liga ranqueada por jogador no TFT.
 """
 
 class ConsumerApiRiot:
-    def __init__(self, api_key: str, region_id: str, invocador_name='xyz'):
+    def __init__(self, api_key: str, region_id: str, invocador_name='xyz', invocador_id_incripted='xyz'):
         self.api_key = api_key
         self.region_id = region_id
         self.invocador_name = invocador_name
+        self.invocador_id_incripted = invocador_id_incripted
         
     def tft_consultar_invocador_por_nome(self):
         URL = 'https://'+self.region_id+'.api.riotgames.com/tft/summoner/v1/summoners/by-name/'+self.invocador_name+'?api_key='+self.api_key
         response = requests.get(URL)
         return response.json()
+    
+    def tft_consultar_liga_ranqueada_por_nome(self):
+        URL = 'https://'+self.region_id+'.api.riotgames.com/tft/league/v1/entries/by-summoner/'+self.invocador_id_incripted+'?api_key='+self.api_key
+        response = requests.get(URL)
+        return response.json()
 
-nova_consulta = ConsumerApiRiot('RGAPI-5daaaf89-04a4-4cb6-a4d3-ead57eb6ad69', 'br1', 'Ieko')
-response_consulta = nova_consulta.tft_consultar_invocador_por_nome()
-print(type(response_consulta))
-for key, value in response_consulta.items():
-    print(key, value)
+#nova_consulta = ConsumerApiRiot('RGAPI-5daaaf89-04a4-4cb6-a4d3-ead57eb6ad69', 'br1', 'Ieko')
+#response_consulta = nova_consulta.tft_consultar_invocador_por_nome()
+#print(type(response_consulta))
+#for key, value in response_consulta.items():
+#    print(key, value)
 
 @pytest.fixture()
 def retorna_api_key_riot_para_consulta() -> str:
@@ -30,19 +37,43 @@ def retorna_api_key_riot_para_consulta() -> str:
     
 @pytest.fixture()
 def retorna_infos_invovacador_testes() -> str:
-    """Perfil do Leko"""
+    """Perfil Exemplo"""
     return {
         'invocador_id': 1640, 
+        'invocador_id_incripted': 'bbYwQtET_GWwodvvxU3i5DEEXsdF3ujtDWfmMTldpfKG3g',
         'invocador_name': 'Ieko', 
         'region_id': 'br1'
         }
 
-invocador_infos = {}
-invocador_infos = retorna_infos_invovacador_testes()
-print(invocador_infos)
-def gera_consumidor_api_riot(retorna_api_key_riot_para_consulta, retorna_infos_invovacador_testes):
-    return ConsumerApi(retorna_api_key_riot_para_consulta)
+
+#invocador_infos = {}
+#invocador_infos = retorna_infos_invovacador_testes()
+#print(invocador_infos)
+def gera_consumidor_api_riot(api_key: str, region_id: str, invocador_name: str, invocador_id_incripted: str):
+    return ConsumerApiRiot(api_key, region_id, invocador_name, invocador_id_incripted)
 
 
-def test_retornar_informacoes_summoner_tft_por_nome(retorna_api_key_riot_para_consulta: str, nome_invocador: str):
-    pass
+def test_retornar_informacoes_summoner_tft_por_nome(retorna_api_key_riot_para_consulta, retorna_infos_invovacador_testes):
+    api_key = retorna_api_key_riot_para_consulta
+    exemplo_invocador = retorna_infos_invovacador_testes
+    nova_consulta = gera_consumidor_api_riot(api_key, exemplo_invocador['region_id'], 
+                                             exemplo_invocador['invocador_name'], exemplo_invocador['invocador_id_incripted'])
+    response = nova_consulta.tft_consultar_invocador_por_nome()
+    
+    assert response['id'] == 'bbYwQtET_GWwodvvxU3i5DEEXsdF3ujtDWfmMTldpfKG3g'
+    assert response['accountId'] == 'JBX0iKm6A6RLm7dQypws4XhOoX2O-ZHE1fQuI77uNhMPKnE'
+    assert response['puuid'] == 'fRCUIJp8iKco_EdZcDE2BU8j5SsGcizXsh2uCFkSgxQrzZrgWhkAyUTyeUk7aQ7aFMkGOOMN6XIsFg'
+    assert response['profileIconId'] == 1640
+    
+
+def test_retornar_informacoes_de_liga_tft_por_id(retorna_api_key_riot_para_consulta, retorna_infos_invovacador_testes):
+    api_key = retorna_api_key_riot_para_consulta
+    exemplo_invocador = retorna_infos_invovacador_testes
+    nova_consulta = gera_consumidor_api_riot(api_key, exemplo_invocador['region_id'], 
+                                             exemplo_invocador['invocador_name'], exemplo_invocador['invocador_id_incripted'])
+    response = nova_consulta.tft_consultar_liga_ranqueada_por_nome()
+    for invocador in response:
+        assert invocador['queueType'] == 'RANKED_TFT'
+        assert invocador['summonerId'] == 'bbYwQtET_GWwodvvxU3i5DEEXsdF3ujtDWfmMTldpfKG3g'
+    
+    
