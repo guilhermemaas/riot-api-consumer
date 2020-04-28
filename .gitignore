@@ -1,0 +1,4 @@
+.env
+__pycache__
+.pytest_cache
+riot_api_key.txt

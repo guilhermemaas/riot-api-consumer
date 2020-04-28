@@ -22,10 +22,10 @@ class ConsumerApiRiot:
         URL = 'https://'+self.region_id+'.api.riotgames.com/tft/league/v1/entries/by-summoner/'+self.invocador_id_incripted+'?api_key='+self.api_key
         response = requests.get(URL)
         return response.json()
-
+    
 #nova_consulta = ConsumerApiRiot('RGAPI-5daaaf89-04a4-4cb6-a4d3-ead57eb6ad69', 'br1', 'Ieko')
 #response_consulta = nova_consulta.tft_consultar_invocador_por_nome()
-#print(type(response_consulta))
+#print(type(response_consulta)) 
 #for key, value in response_consulta.items():
 #    print(key, value)
 
@@ -37,7 +37,7 @@ def retorna_api_key_riot_para_consulta() -> str:
     
 @pytest.fixture()
 def retorna_infos_invovacador_testes() -> str:
-    """Perfil Exemplo"""
+    """Perfil Exemplo Leko"""
     return {
         'invocador_id': 1640, 
         'invocador_id_incripted': 'bbYwQtET_GWwodvvxU3i5DEEXsdF3ujtDWfmMTldpfKG3g',
@@ -49,9 +49,9 @@ def retorna_infos_invovacador_testes() -> str:
 #invocador_infos = {}
 #invocador_infos = retorna_infos_invovacador_testes()
 #print(invocador_infos)
+
 def gera_consumidor_api_riot(api_key: str, region_id: str, invocador_name: str, invocador_id_incripted: str):
     return ConsumerApiRiot(api_key, region_id, invocador_name, invocador_id_incripted)
-
 
 def test_retornar_informacoes_summoner_tft_por_nome(retorna_api_key_riot_para_consulta, retorna_infos_invovacador_testes):
     api_key = retorna_api_key_riot_para_consulta
@@ -71,9 +71,60 @@ def test_retornar_informacoes_de_liga_tft_por_id(retorna_api_key_riot_para_consu
     exemplo_invocador = retorna_infos_invovacador_testes
     nova_consulta = gera_consumidor_api_riot(api_key, exemplo_invocador['region_id'], 
                                              exemplo_invocador['invocador_name'], exemplo_invocador['invocador_id_incripted'])
+    #nova_consulta.TFT.consultar_invocador_por_nome()
     response = nova_consulta.tft_consultar_liga_ranqueada_por_nome()
     for invocador in response:
         assert invocador['queueType'] == 'RANKED_TFT'
         assert invocador['summonerId'] == 'bbYwQtET_GWwodvvxU3i5DEEXsdF3ujtDWfmMTldpfKG3g'
+      
+
     
+class TftApi:
+    def __init__(self, region_id:str, summoner_id: str, api_key: str):
+        self.region_id = region_id
+        self.summoner_id = summoner_id
+        self.api_version = 'v1'
+        self.baseURL = f'https://{self.region_id}.api.riotgames.com/tft/{self.api_version}'
+    
+    def summoner_profile_by_id_incripted(self):
+        URL = f'{self.baseURL}/league/v1/entries/by-summoner/{self.summoner_id}?api_key={self.api_key}'
+        response = requests.get(URL)
+        return response.json()
+    
+      
+class ConsumerApiRiot2:
+    def __init__(self, api_key: str, summoner_region: str, summoner_name='Ilha Nublar'):
+        self.api_key = api_key
+        self.summoner_region = summoner_region
+        self.summoner_name = summoner_name
+        
+        def __init_session():
+            URL = f'https://{self.summoner_region}.api.riotgames.com/tft/summoner/v1/summoners/by-name/{self.summoner_name}?api_key={self.api_key}'
+            response = requests.get(URL).json()
+            return response['Id']
+        
+        self.summoner_id = __init_session()
+        self.TFT = TftAPI(self.summoner_region, self.summoner_id, self.api_key)  
+
+
+def api_riot_factory(api_key: str, summoner_region: str, summoner_name: str):
+    return ConsumerApiRiot2(api_key, summoner_region, summoner_name)
+
+
+@pytest.fixture()
+def example_summoner_ilha_nublar() -> str:
+    """Ilha Nublar Profile - Brazil"""
+    return {
+        'summoner_name': 'Ilha Nublar',
+        'summoner_region': 'br1'
+    }
+    #xxx = api.TFT.summoner_profile_by_id_incripted()
+
+
+def test_init_session_summoner_incripted_id(retorna_api_key_riot_para_consulta, example_summoner_ilha_nublar):
+    """Testing init session with Ilha Nublar profile."""
+    api_key = retorna_api_key_riot_para_consulta
+    ilha_nublar = example_summoner_ilha_nublar
+    api = api_riot_factory(api_key, ilha_nublar['summoner_name'], ilha_nublar['summoner_region']) 
+    assert api_request.summoner_id_incripted == '5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
     
