@@ -80,11 +80,11 @@ def test_retornar_informacoes_de_liga_tft_por_id(retorna_api_key_riot_para_consu
 
     
 class TftApi:
-    def __init__(self, region_id:str, summoner_id: str, api_key: str):
-        self.region_id = region_id
+    def __init__(self, summoner_region:str, summoner_id: str, api_key: str):
+        self.summoner_region = summoner_region
         self.summoner_id = summoner_id
         self.api_version = 'v1'
-        self.baseURL = f'https://{self.region_id}.api.riotgames.com/tft/{self.api_version}'
+        self.baseURL = f'https://{self.summoner_region}.api.riotgames.com/tft/{self.api_version}'
     
     def summoner_profile_by_id_incripted(self):
         URL = f'{self.baseURL}/league/v1/entries/by-summoner/{self.summoner_id}?api_key={self.api_key}'
@@ -101,10 +101,10 @@ class ConsumerApiRiot2:
         def __init_session():
             URL = f'https://{self.summoner_region}.api.riotgames.com/tft/summoner/v1/summoners/by-name/{self.summoner_name}?api_key={self.api_key}'
             response = requests.get(URL).json()
-            return response['Id']
+            return response['id']
         
         self.summoner_id = __init_session()
-        self.TFT = TftAPI(self.summoner_region, self.summoner_id, self.api_key)  
+        self.TFT = TftApi(self.summoner_region, self.summoner_id, self.api_key)  
 
 
 def api_riot_factory(api_key: str, summoner_region: str, summoner_name: str):
@@ -125,6 +125,6 @@ def test_init_session_summoner_incripted_id(retorna_api_key_riot_para_consulta, 
     """Testing init session with Ilha Nublar profile."""
     api_key = retorna_api_key_riot_para_consulta
     ilha_nublar = example_summoner_ilha_nublar
-    api = api_riot_factory(api_key, ilha_nublar['summoner_name'], ilha_nublar['summoner_region']) 
-    assert api_request.summoner_id_incripted == '5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
+    api = api_riot_factory(api_key, ilha_nublar['summoner_region'], ilha_nublar['summoner_name']) 
+    assert api.summoner_id == '5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
     
