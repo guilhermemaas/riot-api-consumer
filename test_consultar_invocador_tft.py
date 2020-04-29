@@ -87,10 +87,11 @@ class TftApi:
         self.summoner_id = summoner_id
         self.api_key = api_key
         self.api_version = 'v1'
-        self.baseURL = f'https://{self.summoner_region}.api.riotgames.com/tft/{self.api_version}'
+        self.baseURL = f'https://{self.summoner_region}.api.riotgames.com/tft'
     
     def summoner_profile(self):
-        URL = f'{self.baseURL}/summoners/{self.summoner_id}?api_key={self.api_key}'
+        URL = f'{self.baseURL}/summoner/{self.api_version}/summoners/{self.summoner_id}?api_key={self.api_key}'
+        #print(f'URL - summoner_profile: {URL}')
         response = requests.get(URL)
         return response.json()
     
@@ -107,7 +108,7 @@ class ConsumerApiRiot2:
             return response.json()
         
         self.api_session = __init_session()
-        self.TFT = TftApi(self.summoner_region, self.api_session['id'], self.api_key)  
+        self.TFT = TftApi(self.summoner_region, self.api_session['id'], self.api_key) 
 
 
 def api_riot_factory(api_key: str, summoner_region: str, summoner_name: str):
