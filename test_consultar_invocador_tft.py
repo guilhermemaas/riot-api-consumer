@@ -6,7 +6,7 @@ import requests
 2) Quero consultar as informacoes de liga ranqueada por jogador no TFT.
 """
 
-class ConsumerApiRiot:
+"""class ConsumerApiRiot:
     def __init__(self, api_key: str, region_id: str, invocador_name='xyz', invocador_id_incripted='xyz'):
         self.api_key = api_key
         self.region_id = region_id
@@ -22,7 +22,7 @@ class ConsumerApiRiot:
         URL = 'https://'+self.region_id+'.api.riotgames.com/tft/league/v1/entries/by-summoner/'+self.invocador_id_incripted+'?api_key='+self.api_key
         response = requests.get(URL)
         return response.json()
-    
+"""    
 #nova_consulta = ConsumerApiRiot('RGAPI-5daaaf89-04a4-4cb6-a4d3-ead57eb6ad69', 'br1', 'Ieko')
 #response_consulta = nova_consulta.tft_consultar_invocador_por_nome()
 #print(type(response_consulta)) 
@@ -49,7 +49,7 @@ def retorna_infos_invovacador_testes() -> str:
 #invocador_infos = {}
 #invocador_infos = retorna_infos_invovacador_testes()
 #print(invocador_infos)
-
+"""
 def gera_consumidor_api_riot(api_key: str, region_id: str, invocador_name: str, invocador_id_incripted: str):
     return ConsumerApiRiot(api_key, region_id, invocador_name, invocador_id_incripted)
 
@@ -76,18 +76,21 @@ def test_retornar_informacoes_de_liga_tft_por_id(retorna_api_key_riot_para_consu
     for invocador in response:
         assert invocador['queueType'] == 'RANKED_TFT'
         assert invocador['summonerId'] == 'bbYwQtET_GWwodvvxU3i5DEEXsdF3ujtDWfmMTldpfKG3g'
-      
-
+"""      
+#####################
+#####################
+#####################
     
 class TftApi:
     def __init__(self, summoner_region:str, summoner_id: str, api_key: str):
         self.summoner_region = summoner_region
         self.summoner_id = summoner_id
+        self.api_key = api_key
         self.api_version = 'v1'
         self.baseURL = f'https://{self.summoner_region}.api.riotgames.com/tft/{self.api_version}'
     
-    def summoner_profile_by_id_incripted(self):
-        URL = f'{self.baseURL}/league/v1/entries/by-summoner/{self.summoner_id}?api_key={self.api_key}'
+    def summoner_profile(self):
+        URL = f'{self.baseURL}/summoners/{self.summoner_id}?api_key={self.api_key}'
         response = requests.get(URL)
         return response.json()
     
@@ -100,11 +103,11 @@ class ConsumerApiRiot2:
         
         def __init_session():
             URL = f'https://{self.summoner_region}.api.riotgames.com/tft/summoner/v1/summoners/by-name/{self.summoner_name}?api_key={self.api_key}'
-            response = requests.get(URL).json()
-            return response['id']
+            response = requests.get(URL)
+            return response.json()
         
-        self.summoner_id = __init_session()
-        self.TFT = TftApi(self.summoner_region, self.summoner_id, self.api_key)  
+        self.api_session = __init_session()
+        self.TFT = TftApi(self.summoner_region, self.api_session['id'], self.api_key)  
 
 
 def api_riot_factory(api_key: str, summoner_region: str, summoner_name: str):
@@ -118,13 +121,24 @@ def example_summoner_ilha_nublar() -> str:
         'summoner_name': 'Ilha Nublar',
         'summoner_region': 'br1'
     }
-    #xxx = api.TFT.summoner_profile_by_id_incripted()
 
 
-def test_init_session_summoner_incripted_id(retorna_api_key_riot_para_consulta, example_summoner_ilha_nublar):
-    """Testing init session with Ilha Nublar profile."""
+def test_init_session(retorna_api_key_riot_para_consulta, example_summoner_ilha_nublar):
+    """Testing init session
+    Summoner Name: lha Nublar profile."""
     api_key = retorna_api_key_riot_para_consulta
     ilha_nublar = example_summoner_ilha_nublar
-    api = api_riot_factory(api_key, ilha_nublar['summoner_region'], ilha_nublar['summoner_name']) 
-    assert api.summoner_id == '5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
+    api = api_riot_factory(api_key, ilha_nublar['summoner_region'],
+                            ilha_nublar['summoner_name']) 
+    assert api.api_session['id'] == '5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
     
+def test_summoner_profile_by_id(retorna_api_key_riot_para_consulta, example_summoner_ilha_nublar):
+    """Testing the consume of /tft/summoner/v1/summoners/by-account/{encryptedAccountId}
+    Summoner Name: Ilha Nublar
+    """
+    api_key = retorna_api_key_riot_para_consulta
+    ilha_nublar = example_summoner_ilha_nublar
+    api = api_riot_factory(api_key, ilha_nublar['summoner_region'], 
+                           ilha_nublar['summoner_name'])
+    tft = api.TFT.summoner_profile()
+    assert tft['id'] =='5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
