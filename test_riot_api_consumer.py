@@ -1,19 +1,15 @@
 from riot_api_consumer import *
 import os
 
-"""
-x
-@pytest.fixture()
-def retorna_api_key_riot_para_consulta():
-    with open('riot_api_key.txt', 'r') as key:
-        return key.read()
-""" 
-  
     
 @pytest.fixture()
 def retorna_api_key_riot_para_consulta():
-    return os.environ.get('RIOT_API_KEY')
-
+    if os.environ.get('RIOT_API_KEY'):
+        return os.environ.get('RIOT_API_KEY'):
+    else:
+        with open('riot_api_key.txt', 'r') as key:
+        return key.read()
+    
     
 @pytest.fixture()
 def summoner_Ieko():
