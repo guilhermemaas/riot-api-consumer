@@ -2,6 +2,7 @@ from riot_api_consumer import *
 import os
 
 """
+x
 @pytest.fixture()
 def retorna_api_key_riot_para_consulta():
     with open('riot_api_key.txt', 'r') as key:
