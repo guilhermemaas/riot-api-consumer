@@ -1,7 +1,7 @@
 # riot-api-consumer
 A simple Consumer of Riot Games API. Focused on TFT game mode(for now).
 
-##Obs.: Work in Progress.
+## Obs.: Work in Progress.
 
 <img src="images/over9000.jpeg"
      alt="Exemple"
