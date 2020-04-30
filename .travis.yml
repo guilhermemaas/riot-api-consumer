@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.8"
+  # PyPy versions
+  - "pypy3"
+install:
+  - pip install -r requirements.txt
+  - pip install .
+script: pytest
