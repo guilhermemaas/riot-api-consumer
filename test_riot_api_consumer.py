@@ -4,11 +4,9 @@ import os
     
 @pytest.fixture()
 def retorna_api_key_riot_para_consulta():
-    if os.environ.get('RIOT_API_KEY'):
-        return os.environ.get('RIOT_API_KEY'):
-    else:
-        with open('riot_api_key.txt', 'r') as key:
-        return key.read()
+    return os.environ.get('RIOT_API_KEY')
+    #with open('riot_api_key.txt', 'r') as key:
+    #return key.read()
     
     
 @pytest.fixture()
