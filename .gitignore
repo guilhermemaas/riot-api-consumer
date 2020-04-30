@@ -3,3 +3,4 @@ __pycache__
 .pytest_cache
 riot_api_key.txt
 testing_consume.py
+.vscode
