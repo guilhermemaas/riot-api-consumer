@@ -9,7 +9,9 @@ A simple Consumer of Riot Games API. Focused on TFT game mode(for now).
 <br/>
 
 
+
 ### Functions description:
+
 
 | Functions/Methods                  | Description                                                           | Parameters
 |------------------------------------|-----------------------------------------------------------------------|------------------------
@@ -26,7 +28,9 @@ A simple Consumer of Riot Games API. Focused on TFT game mode(for now).
 #### Obs.: Work in Progress.
 
 
+
 ### Objectives: 
+
 
 For understand more about Riot Api access this link:
 https://developer.riotgames.com/
@@ -41,13 +45,17 @@ TFT-SUMMONER-V1
 <br/>
 
 
+
 ### Tests(With Pytest):
 
-Actually, i run the tests automa
+
 <img src="images/pytest.png"
      alt="Exemple"
      style="float: left; margin-right: 10px;" />
 <br/>
 
+
 I am currently running the tests automatically on TravisCI every push, if everyone passing the badge has the status "Build Passing", as below:
+
+
 ![build-badge](https://api.travis-ci.com/guilhermemaas/riot-api-consumer.svg?branch=master&status=passed)
