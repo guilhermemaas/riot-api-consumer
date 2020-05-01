@@ -3,10 +3,16 @@ import os
 
     
 @pytest.fixture()
-def retorna_api_key_riot_para_consulta():
+def get_api_key():
+    """
+    You can use the method below. But for this,
+    a file with riot_api.txt name needed be 
+    created in the root path.
+    with open('riot_api_key.txt', 'r') as key:
+        return key.read()
+    The file need contain only the api key information.
+    """
     return os.environ.get('RIOT_API_KEY')
-    #with open('riot_api_key.txt', 'r') as key:
-    #return key.read()
     
     
 @pytest.fixture()
@@ -52,24 +58,24 @@ def league_id_list():
     ]
 
 
-def test_init_session(retorna_api_key_riot_para_consulta, summoner_ilha_nublar):
+def test_init_session(get_api_key, summoner_ilha_nublar):
     """
     Testing init session
     Summoner Name: lha Nublar profile.
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     ilha_nublar = summoner_ilha_nublar
     api = new_api(api_key, ilha_nublar['summoner_region'],
                             ilha_nublar['summoner_name']) 
     assert api.api_session['id'] == '5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
     
     
-def test_get_summoner_profile(retorna_api_key_riot_para_consulta, summoner_ilha_nublar):
+def test_get_summoner_profile(get_api_key, summoner_ilha_nublar):
     """
     Testing the consume of /tft/summoner/v1/summoners/by-account/{encryptedAccountId}
     Summoner Name: Ilha Nublar
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     ilha_nublar = summoner_ilha_nublar
     api = new_api(api_key, ilha_nublar['summoner_region'], 
                            ilha_nublar['summoner_name'])
@@ -77,26 +83,26 @@ def test_get_summoner_profile(retorna_api_key_riot_para_consulta, summoner_ilha_
     assert tft['id'] =='5AtW4neaL009Zy-jUjHLbal7PcsGqQvSpB26-S_hfTTi'
     
     
-def test_get_matches_by_summoner(retorna_api_key_riot_para_consulta, summoner_ilha_nublar):
+def test_get_matches_by_summoner(get_api_key, summoner_ilha_nublar):
     """
     Testing the consume of /tft/match/v1/matches/by-puuid/{puuid}/ids
     Summoner Name: Ilha Nublar
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     ilha_nublar = summoner_ilha_nublar
     api = new_api(api_key, ilha_nublar['summoner_region'],
                            ilha_nublar['summoner_name'])
-    tft = api.TFT.get_matches_by_summoner()
+    tft = api.TFT.get_matches_by_summoner(20)
     for match in ilha_nublar['tft_get_matches_by_summoner']:
         assert match in tft
         
     
-def test_get_match_by_match_id_metadata_participants(retorna_api_key_riot_para_consulta, summoner_ilha_nublar):
+def test_get_match_by_match_id_metadata_participants(get_api_key, summoner_ilha_nublar):
     """
     Testing the consume of /tft/match/v1/matches/{matchId}
     Summoner Name: Ilha Nublar
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     ilha_nublar = summoner_ilha_nublar
     api = new_api(api_key, ilha_nublar['summoner_region'],
                            ilha_nublar['summoner_name'])
@@ -113,12 +119,12 @@ def test_get_match_by_match_id_metadata_participants(retorna_api_key_riot_para_c
         ]
     
     
-def test_get_match_by_match_id_info_game_datetime(retorna_api_key_riot_para_consulta, summoner_ilha_nublar):
+def test_get_match_by_match_id_info_game_datetime(get_api_key, summoner_ilha_nublar):
     """
     Testing the consume of /tft/match/v1/matches/{matchId}
     Summoner Name: Ilha Nublar
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     ilha_nublar = summoner_ilha_nublar
     api = new_api(api_key, ilha_nublar['summoner_region'],
                            ilha_nublar['summoner_name'])
@@ -126,46 +132,46 @@ def test_get_match_by_match_id_info_game_datetime(retorna_api_key_riot_para_cons
     assert tft['info']['game_datetime'] == 1584585338593
     
 
-def test_get_challenger_league(retorna_api_key_riot_para_consulta):
+def test_get_challenger_league(get_api_key):
     """
     Testing the consume of /tft/league/v1/challenger
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     api = new_api(api_key)
     tft = api.TFT.get_challenger_league()
     assert tft['tier'] == 'CHALLENGER'
     assert tft['queue'] == 'RANKED_TFT'
     
 
-def test_get_grandmaster_league(retorna_api_key_riot_para_consulta):
+def test_get_grandmaster_league(get_api_key):
     """
     Testing the consume of /tft/league/v1/grandmaster
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     api = new_api(api_key)
     tft = api.TFT.get_grandmaster_league()
     assert tft['tier'] == 'GRANDMASTER'
     assert tft['queue'] == 'RANKED_TFT'
     
 
-def test_get_master_league(retorna_api_key_riot_para_consulta):
+def test_get_master_league(get_api_key):
     """
     Testing the consume of /tft/league/v1/master
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     api = new_api(api_key)
     tft = api.TFT.get_master_league()
     assert tft['tier'] == 'MASTER'
     assert tft['queue'] == 'RANKED_TFT'
     
     
-def test_get_player_ranked_status(retorna_api_key_riot_para_consulta, summoner_Ieko):
+def test_get_player_ranked_status(get_api_key, summoner_Ieko):
     """
     Testing the consume of /tft/league/v1/entries/by-summoner/{encryptedSummonerId}
     Summoner Name: Ieko
     Region: Brazil
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     leko = summoner_Ieko
     api = new_api(api_key, leko['summoner_region'],
                         leko['summoner_name'])
@@ -174,7 +180,7 @@ def test_get_player_ranked_status(retorna_api_key_riot_para_consulta, summoner_I
     assert tft[0]['summonerId'] == 'bbYwQtET_GWwodvvxU3i5DEEXsdF3ujtDWfmMTldpfKG3g'
     
 
-def test_get_leagues_by_ranking(retorna_api_key_riot_para_consulta):
+def test_get_leagues_by_ranking(get_api_key):
     """
     Testing the consume of /tft/league/v1/entries/{tier}/{division}
     In this case, you need inform tier:
@@ -182,7 +188,7 @@ def test_get_leagues_by_ranking(retorna_api_key_riot_para_consulta):
     and division:
         I, II, III, IV
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     api = new_api(api_key)
     tft = api.TFT.get_leagues_by_ranking('DIAMOND', 'I')
     assert tft[0]['queueType'] == 'RANKED_TFT'
@@ -190,11 +196,11 @@ def test_get_leagues_by_ranking(retorna_api_key_riot_para_consulta):
     assert tft[0]['rank'] == 'I'
     
 
-def test_get_league_details_by_league_id(retorna_api_key_riot_para_consulta, league_id_list):
+def test_get_league_details_by_league_id(get_api_key, league_id_list):
     """
     Testing the consume of /tft/league/v1/leagues/{leagueId}
     """
-    api_key = retorna_api_key_riot_para_consulta
+    api_key = get_api_key
     api = new_api(api_key)
     league_list = league_id_list
     for league_id in league_list:
